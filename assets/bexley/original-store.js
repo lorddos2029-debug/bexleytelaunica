@@ -22,7 +22,19 @@ if(isKit){
     rail.addEventListener('click',e=>{pause();if(dragged){e.preventDefault();e.stopImmediatePropagation();dragged=false}},true);
     rail.addEventListener('wheel',pause,{passive:true});rail.addEventListener('touchstart',pause,{passive:true});
     const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
-    const timer=setInterval(()=>{if(reducedMotion.matches||document.hidden||pointer!==null||Date.now()-lastInteraction<6000||rail.matches(':hover')||rail.contains(document.activeElement))return;const bounds=rail.getBoundingClientRect();if(bounds.bottom<0||bounds.top>innerHeight)return;const max=rail.scrollWidth-rail.clientWidth;if(max<=0)return;const step=(rail.querySelector('button')?.getBoundingClientRect().width||110)+12;rail.scrollTo({left:rail.scrollLeft>=max-2?0:Math.min(max,rail.scrollLeft+step),behavior:'smooth'})},3200);
-    window.addEventListener('pagehide',()=>clearInterval(timer),{once:true});
+    const originals=[...rail.children];
+    if(!reducedMotion.matches){for(const original of originals){const clone=original.cloneNode(true);clone.removeAttribute('data-gallery');clone.setAttribute('aria-hidden','true');clone.tabIndex=-1;clone.onclick=()=>original.click();rail.append(clone)}}
+    let frame=0,lastTime=0,position=rail.scrollLeft;
+    const animate=time=>{
+      const elapsed=Math.min((time-lastTime)/1000,0.05);lastTime=time;
+      const bounds=rail.getBoundingClientRect();
+      if(!reducedMotion.matches&&!document.hidden&&pointer===null&&Date.now()-lastInteraction>1800&&bounds.bottom>0&&bounds.top<innerHeight){
+        const loop=rail.children[originals.length]?.offsetLeft-originals[0].offsetLeft;
+        if(loop>0){position+=26*elapsed;if(position>=loop)position-=loop;rail.scrollLeft=position}
+      }else{position=rail.scrollLeft}
+      frame=requestAnimationFrame(animate);
+    };
+    frame=requestAnimationFrame(animate);
+    window.addEventListener('pagehide',()=>cancelAnimationFrame(frame),{once:true});
   }
 }
