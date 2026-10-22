@@ -18,6 +18,14 @@
     {
       "source": "/checkout/",
       "destination": "/checkout/index.html"
+    },
+    {
+      "source": "/kit",
+      "destination": "/kit.html"
+    },
+    {
+      "source": "/kit/",
+      "destination": "/kit.html"
     }
   ],
   "headers": [
