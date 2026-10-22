@@ -122,6 +122,14 @@
     {
       "source": "/bermuda/",
       "destination": "/bermuda.html"
+    },
+    {
+      "source": "/bermuda2",
+      "destination": "/bermuda2.html"
+    },
+    {
+      "source": "/bermuda2/",
+      "destination": "/bermuda2.html"
     }
   ],
   "headers": [

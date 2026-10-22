@@ -6,3 +6,5 @@ const {pages,renderPage}=await import('./pages.mjs');for(const slug of Object.ke
 fs.copyFileSync('bermuda.html','public/bermuda.html');for(let n=1;n<=8;n++)fs.copyFileSync('assets/bexley/bermuda-'+n+'.png','public/assets/bexley/bermuda-'+n+'.png');
 
 for(let n=1;n<=18;n++)fs.copyFileSync('assets/bexley/bermuda-combo-'+n+'.png','public/assets/bexley/bermuda-combo-'+n+'.png');
+
+fs.copyFileSync('bermuda2.html','public/bermuda2.html');for(let n=1;n<=11;n++)fs.copyFileSync('assets/bexley/bermuda2-'+n+'.png','public/assets/bexley/bermuda2-'+n+'.png');
