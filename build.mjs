@@ -1,0 +1,2 @@
+import fs from 'node:fs';
+fs.mkdirSync('public/checkout',{recursive:true});fs.mkdirSync('public/assets/bexley',{recursive:true});fs.copyFileSync('index.html','public/index.html');fs.copyFileSync('checkout/index.html','public/checkout/index.html');for(const file of ['catalog.mjs','checkout.css','checkout.js','logo.png','original-brand.css','original-store.js','pix.png','tracking.js',...Array.from({length:6},(_,i)=>'vibration-'+(i+1)+'.png')])fs.copyFileSync('assets/bexley/'+file,'public/assets/bexley/'+file);
