@@ -130,6 +130,14 @@
     {
       "source": "/bermuda2/",
       "destination": "/bermuda2.html"
+    },
+    {
+      "source": "/polo",
+      "destination": "/polo.html"
+    },
+    {
+      "source": "/polo/",
+      "destination": "/polo.html"
     }
   ],
   "headers": [
