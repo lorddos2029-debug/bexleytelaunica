@@ -10,3 +10,5 @@ for(let n=1;n<=18;n++)fs.copyFileSync('assets/bexley/bermuda-combo-'+n+'.png','p
 fs.copyFileSync('bermuda2.html','public/bermuda2.html');for(let n=1;n<=11;n++)fs.copyFileSync('assets/bexley/bermuda2-'+n+'.png','public/assets/bexley/bermuda2-'+n+'.png');
 
 fs.copyFileSync('polo.html','public/polo.html');for(let n=1;n<=7;n++)fs.copyFileSync('assets/bexley/polo-'+n+'.png','public/assets/bexley/polo-'+n+'.png');
+
+for(let n=1;n<=20;n++)fs.copyFileSync('assets/bexley/polo-combo-'+n+'.png','public/assets/bexley/polo-combo-'+n+'.png');
