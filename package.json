@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "node server.mjs",
-    "test": "node --test bexley.test.mjs tracking.test.mjs kit.test.mjs",
+    "test": "node --test bexley.test.mjs tracking.test.mjs kit.test.mjs card.test.mjs",
     "build": "node build.mjs"
   },
   "dependencies": {

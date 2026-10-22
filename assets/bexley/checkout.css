@@ -19,3 +19,4 @@ html,body{width:100%;min-width:0}body{margin:0}.checkout-shell{min-height:100vh;
 @media(max-width:360px){.field-row{grid-template-columns:1fr;gap:0}.steps button{gap:4px}.panel h2{font-size:18px}}
 
 .bex-pix-benefit{margin:14px 0 12px;padding:12px;border-radius:6px;background:#f3eeee;color:#171717;font-size:12px;font-weight:400;line-height:1.5}.bex-pix-benefit strong{color:#16874b;font-weight:700}
+.payment-choice{gap:10px;cursor:pointer}.payment-choice>input{width:16px;height:16px;margin:0;flex:none;accent-color:#171717}.payment-choice>span{flex:1}.payment-choice[aria-disabled="true"]{opacity:.55;cursor:default}#card-fields{padding:5px 0 10px}#card-fields input{font-size:16px}.payment-choice:has(input:checked){border-width:2px}

@@ -35,3 +35,6 @@ O servidor local consulta os pagamentos pendentes a cada 30 segundos enquanto es
 O build copia somente os arquivos públicos necessários. O checkout e os endpoints usam as rotas configuradas em vercel.json. Configure URUSPAY_API_KEY, META_PIXEL_ID, META_ACCESS_TOKEN e UTMIFY_API_TOKEN nas variáveis do projeto.
 
 Na Vercel, os pedidos usam recibos criptografados para sobreviver a reinicializações das funções. A consulta automática a cada 30 segundos existe no servidor local; na Vercel, a atualização direta depende das consultas do checkout. O rastreamento configurado na UrusPay continua funcionando no servidor do provedor independentemente da página.
+
+## Cartão Payout
+O cartão usa PAYOUT_SECRET_KEY e PAYOUT_PUBLIC_KEY no servidor. A configuração pública consulta a autenticação da Payout e disponibiliza o método apenas quando a credencial é aceita. A biblioteca oficial tokeniza os dados no navegador. Somente o token temporário é enviado ao servidor; PAN/CVV não são persistidos. Preço de cartão é o preço de catálogo, em 1x, com frete separado e sem desconto Pix. O webhook `/api/card/webhook` confirma a transação na API autenticada antes de atualizar UTMify/Meta. O status também é consultado pelo checkout. Testes usam respostas simuladas e não efetuam cobranças reais.
