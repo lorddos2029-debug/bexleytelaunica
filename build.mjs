@@ -1,2 +1,4 @@
 import fs from 'node:fs';
 fs.mkdirSync('public/checkout',{recursive:true});fs.mkdirSync('public/assets/bexley',{recursive:true});fs.copyFileSync('index.html','public/index.html');fs.copyFileSync('kit.html','public/kit.html');fs.copyFileSync('checkout/index.html','public/checkout/index.html');for(const file of ['catalog.mjs','checkout.css','checkout.js','logo.png','original-brand.css','original-store.js','pix.png','tracking.js',...Array.from({length:7},(_,i)=>'kit-'+(i+1)+'.png'),...Array.from({length:7},(_,i)=>'kit-combo-'+(i+1)+'.png'),...Array.from({length:6},(_,i)=>'vibration-'+(i+1)+'.png')])fs.copyFileSync('assets/bexley/'+file,'public/assets/bexley/'+file);
+
+const {pages,renderPage}=await import('./pages.mjs');for(const slug of Object.keys(pages)){fs.mkdirSync('public/'+slug,{recursive:true});fs.writeFileSync('public/'+slug+'/index.html',renderPage(slug))}

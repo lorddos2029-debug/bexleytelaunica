@@ -26,6 +26,94 @@
     {
       "source": "/kit/",
       "destination": "/kit.html"
+    },
+    {
+      "source": "/sobre",
+      "destination": "/sobre/index.html"
+    },
+    {
+      "source": "/sobre/",
+      "destination": "/sobre/index.html"
+    },
+    {
+      "source": "/contato",
+      "destination": "/contato/index.html"
+    },
+    {
+      "source": "/contato/",
+      "destination": "/contato/index.html"
+    },
+    {
+      "source": "/ajuda",
+      "destination": "/ajuda/index.html"
+    },
+    {
+      "source": "/ajuda/",
+      "destination": "/ajuda/index.html"
+    },
+    {
+      "source": "/trocas-e-devolucoes",
+      "destination": "/trocas-e-devolucoes/index.html"
+    },
+    {
+      "source": "/trocas-e-devolucoes/",
+      "destination": "/trocas-e-devolucoes/index.html"
+    },
+    {
+      "source": "/rastrear-pedido",
+      "destination": "/rastrear-pedido/index.html"
+    },
+    {
+      "source": "/rastrear-pedido/",
+      "destination": "/rastrear-pedido/index.html"
+    },
+    {
+      "source": "/entrega",
+      "destination": "/entrega/index.html"
+    },
+    {
+      "source": "/entrega/",
+      "destination": "/entrega/index.html"
+    },
+    {
+      "source": "/privacidade",
+      "destination": "/privacidade/index.html"
+    },
+    {
+      "source": "/privacidade/",
+      "destination": "/privacidade/index.html"
+    },
+    {
+      "source": "/termos",
+      "destination": "/termos/index.html"
+    },
+    {
+      "source": "/termos/",
+      "destination": "/termos/index.html"
+    },
+    {
+      "source": "/bermudas",
+      "destination": "/bermudas/index.html"
+    },
+    {
+      "source": "/bermudas/",
+      "destination": "/bermudas/index.html"
+    },
+    {
+      "source": "/moda-masculina",
+      "destination": "/moda-masculina/index.html"
+    },
+    {
+      "source": "/moda-masculina/",
+      "destination": "/moda-masculina/index.html"
+    },
+    {
+      "source": "/mais-vendidos",
+      "destination": "/mais-vendidos/index.html"
+    },
+    {
+      "source": "/mais-vendidos/",
+      "destination": "/mais-vendidos/index.html"
     }
   ],
   "headers": [
