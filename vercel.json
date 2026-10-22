@@ -114,6 +114,14 @@
     {
       "source": "/mais-vendidos/",
       "destination": "/mais-vendidos/index.html"
+    },
+    {
+      "source": "/bermuda",
+      "destination": "/bermuda.html"
+    },
+    {
+      "source": "/bermuda/",
+      "destination": "/bermuda.html"
     }
   ],
   "headers": [
