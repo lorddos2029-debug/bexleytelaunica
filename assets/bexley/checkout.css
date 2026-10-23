@@ -20,3 +20,4 @@ html,body{width:100%;min-width:0}body{margin:0}.checkout-shell{min-height:100vh;
 
 .bex-pix-benefit{margin:14px 0 12px;padding:12px;border-radius:6px;background:#f3eeee;color:#171717;font-size:12px;font-weight:400;line-height:1.5}.bex-pix-benefit strong{color:#16874b;font-weight:700}
 .payment-choice{gap:10px;cursor:pointer}.payment-choice>input{width:16px;height:16px;margin:0;flex:none;accent-color:#171717}.payment-choice>span{flex:1}.payment-choice[aria-disabled="true"]{opacity:.55;cursor:default}#card-fields{padding:5px 0 10px}#card-fields input{font-size:16px}.payment-choice:has(input:checked){border-width:2px}
+#card-installments{display:block;width:100%;height:44px;margin-top:6px;padding:0 12px;border:1px solid var(--checkout-border);border-radius:5px;background:#fff;color:var(--checkout-ink);font:16px Inter,Arial,sans-serif}#card-installments:focus-visible{outline:2px solid #171717;outline-offset:2px}

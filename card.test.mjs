@@ -19,6 +19,7 @@ try{
  handler=createPayout(options);paid=true;const status=await(await fetch(base+charge.check_status_url)).json();assert.equal(status.pago,true);assert.equal(events[0].custom_data.value,97.7);assert.equal(events[0].event_id,body.evento_id);
  const invalid=await fetch(base+charge.check_status_url.slice(0,-6)+'abcdef');assert.equal(invalid.status,404);
  const notified=await fetch(base+'/api/card/webhook',{method:'POST',body:JSON.stringify({objectId:'123',data:{status:'refused'}})});assert.equal(notified.status,200);
+ for(const installments of [1,2,3,4,5,6]){const payment=await post({...body,installments,evento_id:body.evento_id+'_n'+installments});assert.equal(payment.status,200);assert.equal(submitted.installments,installments);assert.equal(submitted.amount,9770)}for(const installments of [0,7,1.5,'6'])assert.equal((await post({...body,installments})).status,400);
  handler=createPayout({...options,fetcher:async()=>({ok:false,status:401,json:async()=>({message:'invalid'})})});const unavailable=await(await fetch(base+'/api/card/config')).json();assert.equal(unavailable.enabled,true);assert.equal(unavailable.authenticated,false);assert.equal(unavailable.diagnostic.http,401);assert.equal((await post(body)).status,503);
  console.log('PASS: cartão tokenizado, valor no servidor sem desconto Pix, frete, duplicação local, confirmação autenticada, webhook verificado e credencial recusada. Nenhuma cobrança real.');
 }finally{server.close()}
