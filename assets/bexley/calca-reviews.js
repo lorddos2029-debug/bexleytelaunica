@@ -1,0 +1,1 @@
+document.querySelectorAll('[data-review-image]').forEach(button=>button.addEventListener('click',()=>{const image=document.getElementById('bex-zoom-image');image.src=button.dataset.reviewImage;image.alt=button.querySelector('img').alt;document.getElementById('bex-lightbox').showModal()}));

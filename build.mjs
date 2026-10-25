@@ -16,3 +16,5 @@ for(let n=1;n<=20;n++)fs.copyFileSync('assets/bexley/polo-combo-'+n+'.png','publ
 fs.copyFileSync('calca.html','public/calca.html');for(let n=1;n<=9;n++)fs.copyFileSync('assets/bexley/calca-'+n+'.png','public/assets/bexley/calca-'+n+'.png');
 
 for(let n=1;n<=5;n++)fs.copyFileSync('assets/bexley/calca-combo-'+n+'.png','public/assets/bexley/calca-combo-'+n+'.png');
+
+fs.copyFileSync('assets/bexley/calca-reviews.js','public/assets/bexley/calca-reviews.js');for(let n=1;n<=9;n++)fs.copyFileSync('assets/bexley/calca-review-'+n+'.png','public/assets/bexley/calca-review-'+n+'.png');
