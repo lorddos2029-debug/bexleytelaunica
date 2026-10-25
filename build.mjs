@@ -20,3 +20,5 @@ for(let n=1;n<=5;n++)fs.copyFileSync('assets/bexley/calca-combo-'+n+'.png','publ
 fs.copyFileSync('assets/bexley/calca-reviews.js','public/assets/bexley/calca-reviews.js');for(let n=1;n<=9;n++)fs.copyFileSync('assets/bexley/calca-review-'+n+'.png','public/assets/bexley/calca-review-'+n+'.png');
 
 for(let n=1;n<=6;n++)fs.copyFileSync('assets/bexley/bermuda2-review-'+n+'.png','public/assets/bexley/bermuda2-review-'+n+'.png');
+
+for(let n=1;n<=3;n++)fs.copyFileSync('assets/bexley/bermuda-review-'+n+'.png','public/assets/bexley/bermuda-review-'+n+'.png');
