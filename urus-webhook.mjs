@@ -2,26 +2,33 @@ import {createHash,randomBytes,createCipheriv,createDecipheriv} from 'node:crypt
 import {deflateRawSync,inflateRawSync} from 'node:zlib';
 import {utmifyOrder,syncUtmify,utcDate} from './utmify.mjs';
 import {metaPurchase,sendMetaPurchase} from './meta.mjs';
+import {createWebhookStore} from './webhook-store.mjs';
 
-export function createUrusWebhook({key,utmifyToken,metaPixelId,metaToken,fetcher=fetch}){
+export function createUrusWebhook({key,utmifyToken,metaPixelId,metaToken,fetcher=fetch,webhookStore=createWebhookStore()}){
  const cipherKey=createHash('sha256').update('bexley-webhook-v1:'+key).digest();
- function prepare(payload,eventId,origin){
+ async function prepare(payload,eventId,origin){
   const order=utmifyOrder(payload,'pending');
   const purchase=metaPixelId?metaPurchase({payload,eventId,pixelId:metaPixelId,sourceURL:origin+'/checkout'}):null;
   const context={order,purchase,expires:Date.now()+7*86400000};
   const iv=randomBytes(12),cipher=createCipheriv('aes-256-gcm',cipherKey,iv);
   const encrypted=Buffer.concat([cipher.update(deflateRawSync(Buffer.from(JSON.stringify(context)))),cipher.final()]);
   const token=Buffer.concat([iv,cipher.getAuthTag(),encrypted]).toString('base64url');
-  return {order,purchase,url:origin+'/api/urus/webhook/'+token};
+  // Keep the gateway URL short: its webhook_url database column has a strict limit.
+  // Customer data is encrypted in private durable storage, never placed in this URL.
+  let url=null;
+  if(webhookStore){try{const reference=randomBytes(32).toString('base64url');await webhookStore.write(reference,token);url=origin+'/api/urus/webhook/r_'+reference}catch{console.error('[Bexley webhook] armazenamento indisponível; consulta do checkout permanece ativa')}}
+  else console.warn('[Bexley webhook] armazenamento não configurado; consulta do checkout permanece ativa');
+  return {order,purchase,url};
  }
- function decode(token){
+ async function decode(token){
+  if(/^r_[A-Za-z0-9_-]{43}$/.test(token)){if(!webhookStore)return null;token=await webhookStore.read(token.slice(2))}
   if(!token||token.length>12000)return null;
   try{const raw=Buffer.from(token,'base64url'),decipher=createDecipheriv('aes-256-gcm',cipherKey,raw.subarray(0,12));decipher.setAuthTag(raw.subarray(12,28));const data=JSON.parse(inflateRawSync(Buffer.concat([decipher.update(raw.subarray(28)),decipher.final()]),{maxOutputLength:60000}).toString());return data.expires>Date.now()?data:null}catch{return null}
  }
  const sent=new Map();
  async function handle(req,res,token){
   const send=(status,data)=>{res.writeHead(status,{'Content-Type':'application/json','Cache-Control':'no-store'});res.end(JSON.stringify(data))};
-  const context=decode(token);if(!context)return send(401,{ok:false,error:'Aviso não autorizado.'});
+  const context=await decode(token);if(!context)return send(401,{ok:false,error:'Aviso não autorizado.'});
   let body=req.body;
   if(Buffer.isBuffer(body))body=body.toString();
   if(typeof body==='string'){try{body=JSON.parse(body)}catch{return send(400,{ok:false})}}

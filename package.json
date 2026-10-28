@@ -9,6 +9,7 @@
     "build": "node build.mjs"
   },
   "dependencies": {
+    "@vercel/blob": "^2.8.2",
     "qrcode": "^1.5.4"
   },
   "devDependencies": {
