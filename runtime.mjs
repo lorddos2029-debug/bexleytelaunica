@@ -1,7 +1,7 @@
 import {createPayments} from './payments.mjs';
 import {createPayout} from './payout.mjs';
 import {createPanel,configStore} from './panel.mjs';
-import {pinpayFetcher} from './pinpay.mjs';
+import {pinpayFetcher,pinpayNotification} from './pinpay.mjs';
 export function createRuntime({env=process.env,root,stateless=true,fetcher=fetch,secure=true,store}={}){
  const shared={utmifyToken:env.UTMIFY_API_TOKEN,metaPixelId:env.META_PIXEL_ID,metaToken:env.META_ACCESS_TOKEN,stateless,fetcher};
  const urus=createPayments({...shared,key:env.URUSPAY_API_KEY,root});
@@ -11,6 +11,7 @@ export function createRuntime({env=process.env,root,stateless=true,fetcher=fetch
  async function handle(req,res,route){
   if(route.startsWith('/api/panel/'))return panel.handler(req,res,route.slice(5));
   if(route.startsWith('/api/card/'))return card(req,res,route);
+  if(route==='/api/pinpay/notifications')return pinpayNotification(req,res,{secretKey:env.PINPAY_SECRET_KEY,fetcher,handle:pinpay});
   if(route.startsWith('/api/pinpay/')){
    const sub=route.slice('/api/pinpay/'.length);
    if(!/^(?:status|qr|webhook)\//.test(sub)){res.writeHead(404);return res.end()}

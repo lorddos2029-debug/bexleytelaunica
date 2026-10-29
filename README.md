@@ -41,3 +41,5 @@ O cartão usa PAYOUT_SECRET_KEY e PAYOUT_PUBLIC_KEY no servidor. A configuraçã
 
 ## Painel e Pix PinPay
 /painel usa senha validada por scrypt (ADMIN_PASSWORD_HASH), cookie HttpOnly/Secure/SameSite=Strict assinado por ADMIN_SESSION_SECRET, CSRF e limite de tentativas por IP. O seletor persiste configuração no Blob privado; UrusPay é o padrão. PINPAY_SECRET_KEY e PINPAY_PUBLIC_KEY ficam no servidor. A API PinPay usa Bearer em https://api.usepinpay.com/functions/v1/api-v1, com amount em centavos e metadata.external_reference/checkout_url obrigatórios. Recibos PinPay usam /api/pinpay/status e /api/pinpay/qr; o webhook privado /api/pinpay/webhook confere a transação autenticada, valor e comprador/referência antes de atualizar UTMify/Meta. A troca afeta apenas novas cobranças; pedidos antigos continuam sendo consultados na adquirente original.
+
+A PinPay também notifica /api/pinpay/notifications nos eventos payment_approved/pix_received. O servidor busca a transação autenticada e usa apenas a referência de recibo guardada na metadata pela própria loja; não confia em status ou referências fornecidos pelo POST.
