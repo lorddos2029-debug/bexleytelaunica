@@ -1,5 +1,3 @@
-import {createPayout} from '../payout.mjs';
-import {createPayments} from '../payments.mjs';
-const handler=createPayments({key:process.env.URUSPAY_API_KEY,utmifyToken:process.env.UTMIFY_API_TOKEN,metaPixelId:process.env.META_PIXEL_ID,metaToken:process.env.META_ACCESS_TOKEN,root:'/tmp/bexley',stateless:true});
-const payout=createPayout({secretKey:process.env.PAYOUT_SECRET_KEY,publicKey:process.env.PAYOUT_PUBLIC_KEY,utmifyToken:process.env.UTMIFY_API_TOKEN,metaPixelId:process.env.META_PIXEL_ID,metaToken:process.env.META_ACCESS_TOKEN});
-export default async function(req,res){const url=new URL(req.url,'https://bexley.local');const route=String(req.query?.route||url.searchParams.get('route')||'');if(route==='health'){res.setHeader('Cache-Control','no-store');return res.status(200).json({ok:true,store:'Bexley',pix_configurado:!!process.env.URUSPAY_API_KEY,utmify_configurado:!!process.env.UTMIFY_API_TOKEN,meta_configurado:!!process.env.META_PIXEL_ID&&!!process.env.META_ACCESS_TOKEN})}return (route.startsWith('card/')?payout:handler)(req,res,'/api/'+route)}
+import {createRuntime} from '../runtime.mjs';
+const runtime=createRuntime({root:'/tmp/bexley',stateless:true});
+export default async function(req,res){const url=new URL(req.url,'https://bexley.local');const route=String(req.query?.route||url.searchParams.get('route')||'');if(route==='health'){res.setHeader('Cache-Control','no-store');return res.status(200).json({ok:true,store:'Bexley',pix_configurado:!!process.env.URUSPAY_API_KEY,utmify_configurado:!!process.env.UTMIFY_API_TOKEN,meta_configurado:!!process.env.META_PIXEL_ID&&!!process.env.META_ACCESS_TOKEN})}return runtime.handle(req,res,'/api/'+route)}
