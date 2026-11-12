@@ -8,6 +8,10 @@
   },
   "rewrites": [
     {
+      "source": "/webhooks/vaultic",
+      "destination": "/api/handler?route=vaultic/webhook"
+    },
+    {
       "source": "/api/:path*",
       "destination": "/api/handler?route=:path*"
     },

@@ -5,11 +5,12 @@
   "type": "module",
   "scripts": {
     "start": "node server.mjs",
-    "test": "node --test bexley.test.mjs tracking.test.mjs kit.test.mjs card.test.mjs urus-webhook.test.mjs panel-pinpay.test.mjs jaqueta.test.mjs jaqueta-checkout.test.mjs",
+    "test": "node --test bexley.test.mjs tracking.test.mjs kit.test.mjs card.test.mjs urus-webhook.test.mjs panel-pinpay.test.mjs jaqueta.test.mjs jaqueta-checkout.test.mjs vaultic.test.mjs",
     "build": "node build.mjs"
   },
   "dependencies": {
     "@vercel/blob": "^2.8.2",
+    "@vercel/functions": "^3.11.1",
     "qrcode": "^1.5.4"
   },
   "devDependencies": {
