@@ -44,7 +44,7 @@ export function prepareVaulticOrder(b,req,{trustProxy=false}={}){
  const customer={name,email,document:String(b.cpf).replace(/\D/g,''),phone,address:{street:String(a.logradouro).trim(),number:String(a.numero).trim(),zipCode,city:String(a.cidade).trim(),state,...(a.complemento?{complement:String(a.complemento).slice(0,100)}:{}),...(a.bairro?{neighborhood:String(a.bairro).slice(0,100)}:{})}};
  const id=digest(b.evento_id),fingerprint=digest({items,customer,frete:b.frete});
  const proto=req.headers['x-forwarded-proto']==='https'?'https':'http',host=String(req.headers.host||'');
- return {id,fingerprint,amount,createdAt:Date.now(),status:'pending',order_status:'aguardando pagamento',events:{},releaseCount:0,fulfillment:'awaiting_payment',idempotencyKey:'pedido-'+id,payload:{method:'pix',amount,description:'Pedido '+id,isPhysicalProduct:true,payerIp:buyerIPv4(req,{trustProxy}),customer,items,metadata:{orderId:id},...(host?{sourceUrl:proto+'://'+host+'/checkout'}:{})}};
+ return {id,fingerprint,amount,createdAt:Date.now(),orderItems:b.itens.map(x=>({name:productFor(x).shortName,color:x.color,size:x.size||'',quantity:x.quantity,unitPrice:pixUnitPrice(x),image:productFor(x).images[x.color]})),shippingAmount:b.frete==='sedex'?1790:0,status:'pending',order_status:'aguardando pagamento',events:{},releaseCount:0,fulfillment:'awaiting_payment',idempotencyKey:'pedido-'+id,payload:{method:'pix',amount,description:'Pedido '+id,isPhysicalProduct:true,payerIp:buyerIPv4(req,{trustProxy}),customer,items,metadata:{orderId:id},...(host?{sourceUrl:proto+'://'+host+'/checkout'}:{})}};
 }
 // Applied only after a verified webhook or an authenticated server GET.
 export function applyVaulticPayment(order,payment,{eventId,now=Date.now()}={}){
@@ -69,7 +69,7 @@ export function createVaulticPayments({env=process.env,root,fetcher=fetch,store=
  const configured=()=>{if(!env.VAULTIC_API_KEY||!env.VAULTIC_WEBHOOK_SECRET)throw vaulticError('configuration_error','PIX indisponível: configure VAULTIC_API_KEY e VAULTIC_WEBHOOK_SECRET no servidor.',503)};
  const tokenFor=id=>id+'_'+createHmac('sha256',env.VAULTIC_WEBHOOK_SECRET).update('vaultic-status:'+id).digest('hex');
  function orderId(token){if(!/^[a-f0-9]{64}_[a-f0-9]{64}$/.test(token))return null;const id=token.slice(0,64),expected=tokenFor(id);return timingSafeEqual(Buffer.from(expected),Buffer.from(token))?id:null;}
- const view=o=>({ok:true,gateway:'vaultic',amount:o.amount,valor_centavos:o.amount,venda_id:o.vaultic_payment_id,evento_id:'vaultic-'+o.id,payment_method:'pix',status:o.status,pago:o.status==='paid'&&!!o.paidAt,status_message:messages[o.status],pix_code:o.copyPaste,check_status_url:'/api/vaultic/status/'+tokenFor(o.id)});
+ const view=o=>({ok:true,gateway:'vaultic',amount:o.amount,valor_centavos:o.amount,venda_id:o.vaultic_payment_id,evento_id:'vaultic-'+o.id,payment_method:'pix',status:o.status,pago:o.status==='paid'&&!!o.paidAt,status_message:messages[o.status],pix_code:o.copyPaste,order_summary:{items:o.orderItems||o.payload.items.filter(x=>x.title!=='Frete Sedex').map(x=>({name:x.title,quantity:x.quantity,unitPrice:x.unitPrice})),shipping:o.shippingAmount??o.payload.items.filter(x=>x.title==='Frete Sedex').reduce((n,x)=>n+x.quantity*x.unitPrice,0),total:o.amount},check_status_url:'/api/vaultic/status/'+tokenFor(o.id)});
  async function handle(req,res,route){
   const send=(status,data)=>{res.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});res.end(JSON.stringify(data));};
   try{
