@@ -4,9 +4,11 @@ import http from 'node:http';
 import {createHmac,randomUUID} from 'node:crypto';
 import {BlobPreconditionFailedError} from '@vercel/blob';
 import {createVaulticStore} from './vaultic-store.mjs';
-import {createVaulticPayments,verifyVaulticSignature,prepareVaulticOrder} from './vaultic-payments.mjs';
+import {createVaulticPayments,verifyVaulticSignature,prepareVaulticOrder,rawBody} from './vaultic-payments.mjs';
+import {Readable} from 'node:stream';
 import {createVaulticClient} from './vaultic-api.mjs';
 const env={VAULTIC_API_KEY:'vk_test_fixture',VAULTIC_WEBHOOK_SECRET:'whsec_fixture'};
+test('corpo bruto ignora getter JSON e preserva UTF-8 entre chunks',async()=>{const raw=Buffer.from('{"name":"São João"}');const req=Readable.from([raw.subarray(0,11),raw.subarray(11,12),raw.subarray(12)]);Object.defineProperty(req,'body',{get(){throw Error('JSON helper must not be accessed')}});assert.equal(await rawBody(req),raw.toString('utf8'));});
 const body=()=>({nome:'Teste Vaultic',email:'teste@example.com',cpf:'52998224725',telefone:'5511999999999',evento_id:'ev_'+randomUUID(),frete:'sedex',endereco:{cep:'01001000',logradouro:'Praça',numero:'1',bairro:'Sé',cidade:'São Paulo',uf:'SP'},itens:[{productId:'jaqueta',color:'2 Pretas',size:'1ª M / 2ª GG',quantity:1}],valor:0.01});
 function blobFixture(){const records=new Map();let revision=0;return {records,async get(key,opts){assert.equal(opts.useCache,false);const r=records.get(key);return r?{stream:new Blob([r.raw]).stream(),blob:{etag:r.etag}}:null;},async put(key,raw,opts){await Promise.resolve();const r=records.get(key);if((opts.ifMatch&&opts.ifMatch!==r?.etag)||(!opts.allowOverwrite&&!opts.ifMatch&&r))throw new BlobPreconditionFailedError();records.set(key,{raw,etag:String(++revision)});}};}
 async function fixture(){

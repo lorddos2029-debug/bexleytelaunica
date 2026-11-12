@@ -9,7 +9,14 @@ import {createVaulticTracking} from './vaultic-tracking.mjs';
 const digest=v=>createHash('sha256').update(JSON.stringify(v)).digest('hex');
 const statuses=new Set(['pending','under_review','paid','expired','failed','canceled','refunded','partially_refunded','med','chargeback']);
 const messages={pending:'Aguardando pagamento',under_review:'Pagamento recebido, em análise',paid:'Pagamento confirmado',expired:'PIX expirado',failed:'Pagamento recusado',canceled:'Pagamento cancelado',refunded:'Pagamento estornado',partially_refunded:'Pagamento parcialmente estornado',med:'Pagamento em revisão manual',chargeback:'Pagamento contestado'};
-export async function rawBody(req,limit=65536){if(Buffer.isBuffer(req.body))return req.body.toString('utf8');if(typeof req.body==='string')return req.body;if(req.body&&typeof req.body==='object')throw vaulticError('raw_body_required','A rota exige o corpo bruto.',400);let raw='';for await(const c of req){raw+=c;if(Buffer.byteLength(raw)>limit)throw vaulticError('body_too_large','Dados excedem o limite.',413)}return raw;}
+export async function rawBody(req,limit=65536){
+ // On Vercel req.body is a lazy JSON helper. Read the original stream before
+ // touching that property; concatenating buffers also preserves UTF-8 boundaries.
+ let chunks=[],length=0;
+ if(req[Symbol.asyncIterator]){for await(const c of req){const b=Buffer.isBuffer(c)?c:Buffer.from(c);length+=b.length;if(length>limit)throw vaulticError('body_too_large','Dados excedem o limite.',413);chunks.push(b);}return Buffer.concat(chunks).toString('utf8');}
+ const body=req.body;if(Buffer.isBuffer(body)||typeof body==='string'){if(Buffer.byteLength(body)>limit)throw vaulticError('body_too_large','Dados excedem o limite.',413);return body.toString('utf8');}
+ throw vaulticError('raw_body_required','A rota exige o corpo bruto.',400);
+}
 export function verifyVaulticSignature(raw,header,secret,now=Date.now()){
  if(!secret)throw vaulticError('configuration_error','VAULTIC_WEBHOOK_SECRET não configurado.',503);
  const parts=String(header||'').split(','),t=parts.find(p=>p.startsWith('t='))?.slice(2),v=parts.find(p=>p.startsWith('v1='))?.slice(3);
