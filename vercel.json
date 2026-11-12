@@ -154,6 +154,14 @@
     {
       "source": "/painel/",
       "destination": "/painel.html"
+    },
+    {
+      "source": "/jaqueta",
+      "destination": "/jaqueta.html"
+    },
+    {
+      "source": "/jaqueta/",
+      "destination": "/jaqueta.html"
     }
   ],
   "headers": [
