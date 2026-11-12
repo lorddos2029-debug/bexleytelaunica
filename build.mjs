@@ -33,3 +33,5 @@ fs.copyFileSync('jaqueta.html','public/jaqueta.html');for(let n=1;n<=7;n++)fs.co
 fs.copyFileSync('assets/bexley/stock-counter.mjs','public/assets/bexley/stock-counter.mjs');
 
 fs.copyFileSync('assets/bexley/checkout-phone.mjs','public/assets/bexley/checkout-phone.mjs');
+
+fs.copyFileSync('alfaiataria.html','public/alfaiataria.html');for(let n=1;n<=7;n++)fs.copyFileSync('assets/bexley/alfaiataria-'+n+'.png','public/assets/bexley/alfaiataria-'+n+'.png');for(let n=1;n<=6;n++)fs.copyFileSync('assets/bexley/alfaiataria-review-'+n+'.png','public/assets/bexley/alfaiataria-review-'+n+'.png');

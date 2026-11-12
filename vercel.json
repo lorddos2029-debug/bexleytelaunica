@@ -166,6 +166,14 @@
     {
       "source": "/jaqueta/",
       "destination": "/jaqueta.html"
+    },
+    {
+      "source": "/alfaiataria",
+      "destination": "/alfaiataria.html"
+    },
+    {
+      "source": "/alfaiataria/",
+      "destination": "/alfaiataria.html"
     }
   ],
   "headers": [
