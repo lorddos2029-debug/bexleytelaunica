@@ -24,3 +24,6 @@ for(let n=1;n<=6;n++)fs.copyFileSync('assets/bexley/bermuda2-review-'+n+'.png','
 for(let n=1;n<=3;n++)fs.copyFileSync('assets/bexley/bermuda-review-'+n+'.png','public/assets/bexley/bermuda-review-'+n+'.png');
 
 fs.copyFileSync('painel.html','public/painel.html');for(const f of ['panel.css','panel.js'])fs.copyFileSync('assets/bexley/'+f,'public/assets/bexley/'+f);
+
+// Fotos das avaliações do kit.
+for(let n=1;n<=6;n++)fs.copyFileSync('assets/bexley/kit-review-'+n+'.png','public/assets/bexley/kit-review-'+n+'.png');
