@@ -37,3 +37,5 @@ fs.copyFileSync('assets/bexley/checkout-phone.mjs','public/assets/bexley/checkou
 fs.copyFileSync('alfaiataria.html','public/alfaiataria.html');for(let n=1;n<=7;n++)fs.copyFileSync('assets/bexley/alfaiataria-'+n+'.png','public/assets/bexley/alfaiataria-'+n+'.png');for(let n=1;n<=6;n++)fs.copyFileSync('assets/bexley/alfaiataria-review-'+n+'.png','public/assets/bexley/alfaiataria-review-'+n+'.png');
 
 for(const f of ['reference-base.css','reference-product.css','reference-checkout.css','reference-interactions.mjs'])fs.copyFileSync('assets/bexley/'+f,'public/assets/bexley/'+f);
+
+fs.copyFileSync('assets/bexley/storefront-footer.css','public/assets/bexley/storefront-footer.css');
