@@ -8,6 +8,14 @@
   },
   "rewrites": [
     {
+      "source": "/cueca",
+      "destination": "/cueca.html"
+    },
+    {
+      "source": "/cueca/",
+      "destination": "/cueca.html"
+    },
+    {
       "source": "/webhooks/vaultic",
       "destination": "/api/handler?route=vaultic/webhook"
     },

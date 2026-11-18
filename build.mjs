@@ -39,3 +39,5 @@ fs.copyFileSync('alfaiataria.html','public/alfaiataria.html');for(let n=1;n<=7;n
 for(const f of ['reference-base.css','reference-product.css','reference-checkout.css','reference-interactions.mjs'])fs.copyFileSync('assets/bexley/'+f,'public/assets/bexley/'+f);
 
 fs.copyFileSync('assets/bexley/storefront-footer.css','public/assets/bexley/storefront-footer.css');
+
+fs.copyFileSync('cueca.html','public/cueca.html');for(let n=1;n<=9;n++)fs.copyFileSync('assets/bexley/cueca-'+n+'.png','public/assets/bexley/cueca-'+n+'.png');for(let n=1;n<=6;n++)fs.copyFileSync('assets/bexley/cueca-review-'+n+'.png','public/assets/bexley/cueca-review-'+n+'.png');
