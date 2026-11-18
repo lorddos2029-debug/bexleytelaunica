@@ -28,7 +28,7 @@ export function buyerIPv4(req,{trustProxy=false}={}){
  const ip=raw.startsWith('::ffff:')?raw.slice(7):raw;
  if(!isIPv4(ip)){console.warn('[Vaultic]',{code:'ipv4_required'});throw vaulticError('ipv4_required','Não foi possível identificar uma conexão IPv4 para o PIX. Tente outra conexão ou forma de pagamento.',422)}return ip;
 }
-export function prepareVaulticOrder(b,req,{trustProxy=false}={}){
+export function prepareVaulticOrder(b,req,{trustProxy=false,requireIPv4=true,minimumAmount=1500}={}){
  if(!/^ev_[A-Za-z0-9_-]{8,110}$/.test(b.evento_id||''))throw vaulticError('invalid_order','Identificação do pedido inválida. Atualize o checkout.');
  if(!validCPF(b.cpf))throw vaulticError('validation_error','CPF inválido. Confira os 11 números.');
  const name=String(b.nome||'').trim(),email=String(b.email||'').trim(),phone=String(b.telefone||'').replace(/\D/g,'');
@@ -40,11 +40,11 @@ export function prepareVaulticOrder(b,req,{trustProxy=false}={}){
  if(!['free','sedex'].includes(b.frete)||!Array.isArray(b.itens)||!b.itens.length||b.itens.length>5||b.itens.some(x=>!validItem(x))||b.itens.reduce((n,x)=>n+x.quantity,0)>99)throw vaulticError('validation_error','Confira os produtos e a opção de frete.');
  const items=b.itens.map(x=>({title:(productFor(x).shortName+' — '+x.color+(x.size?' · Tamanho '+x.size:'')).slice(0,120),quantity:x.quantity,unitPrice:pixUnitPrice(x)}));
  if(b.frete==='sedex')items.push({title:'Frete Sedex',quantity:1,unitPrice:1790});
- const amount=items.reduce((n,x)=>n+x.quantity*x.unitPrice,0);if(!Number.isSafeInteger(amount)||amount<1500||amount>10000000||items.some(x=>!Number.isSafeInteger(x.unitPrice)||x.unitPrice<1))throw vaulticError('amount_below_minimum','Valor do pedido fora dos limites do PIX.',422);
+ const amount=items.reduce((n,x)=>n+x.quantity*x.unitPrice,0);if(!Number.isSafeInteger(amount)||amount<minimumAmount||amount>10000000||items.some(x=>!Number.isSafeInteger(x.unitPrice)||x.unitPrice<1))throw vaulticError('amount_below_minimum','Valor do pedido fora dos limites do PIX.',422);
  const customer={name,email,document:String(b.cpf).replace(/\D/g,''),phone,address:{street:String(a.logradouro).trim(),number:String(a.numero).trim(),zipCode,city:String(a.cidade).trim(),state,...(a.complemento?{complement:String(a.complemento).slice(0,100)}:{}),...(a.bairro?{neighborhood:String(a.bairro).slice(0,100)}:{})}};
  const id=digest(b.evento_id),fingerprint=digest({items,customer,frete:b.frete});
  const proto=req.headers['x-forwarded-proto']==='https'?'https':'http',host=String(req.headers.host||'');
- return {id,fingerprint,amount,createdAt:Date.now(),orderItems:b.itens.map(x=>({name:productFor(x).shortName,color:x.color,size:x.size||'',quantity:x.quantity,unitPrice:pixUnitPrice(x),image:productFor(x).images[x.color]})),shippingAmount:b.frete==='sedex'?1790:0,status:'pending',order_status:'aguardando pagamento',events:{},releaseCount:0,fulfillment:'awaiting_payment',idempotencyKey:'pedido-'+id,payload:{method:'pix',amount,description:'Pedido '+id,isPhysicalProduct:true,payerIp:buyerIPv4(req,{trustProxy}),customer,items,metadata:{orderId:id},...(host?{sourceUrl:proto+'://'+host+'/checkout'}:{})}};
+ return {id,fingerprint,amount,createdAt:Date.now(),orderItems:b.itens.map(x=>({name:productFor(x).shortName,color:x.color,size:x.size||'',quantity:x.quantity,unitPrice:pixUnitPrice(x),image:productFor(x).images[x.color]})),shippingAmount:b.frete==='sedex'?1790:0,status:'pending',order_status:'aguardando pagamento',events:{},releaseCount:0,fulfillment:'awaiting_payment',idempotencyKey:'pedido-'+id,payload:{method:'pix',amount,description:'Pedido '+id,isPhysicalProduct:true,...(requireIPv4?{payerIp:buyerIPv4(req,{trustProxy})}:{}),customer,items,metadata:{orderId:id},...(host?{sourceUrl:proto+'://'+host+'/checkout'}:{})}};
 }
 // Applied only after a verified webhook or an authenticated server GET.
 export function applyVaulticPayment(order,payment,{eventId,now=Date.now()}={}){

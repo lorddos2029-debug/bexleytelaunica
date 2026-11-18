@@ -4,9 +4,10 @@ import path from 'node:path';
 import {randomUUID} from 'node:crypto';
 // An order and its unique event IDs live in one document. ETag CAS commits both
 // together, so parallel webhook deliveries cannot release the same order twice.
-export function createVaulticStore({token=process.env.BLOB_READ_WRITE_TOKEN,root='/tmp/bexley',production=false,blob={put,get}}={}){
+export function createVaulticStore({token=process.env.BLOB_READ_WRITE_TOKEN,root='/tmp/bexley',production=false,namespace='vaultic',blob={put,get}}={}){
+ if(!/^[a-z0-9-]+$/.test(namespace))throw Error('Invalid storage namespace');
  const queues=new Map();
- const name=id=>{if(!/^[a-f0-9]{64}$/.test(id))throw Error('Invalid order ID');return 'vaultic/orders/'+id+'.json'};
+ const name=id=>{if(!/^[a-f0-9]{64}$/.test(id))throw Error('Invalid order ID');return namespace+'/orders/'+id+'.json'};
  async function read(id){
   // Compressed downloads expose a weak W/ ETag. Conditional writes require the
   // strong object ETag, so request the identity representation for CAS reads.

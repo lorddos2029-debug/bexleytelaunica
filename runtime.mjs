@@ -2,17 +2,23 @@ import {createPayments} from './payments.mjs';
 import {createPayout} from './payout.mjs';
 import {createPanel,configStore} from './panel.mjs';
 import {pinpayFetcher,pinpayNotification} from './pinpay.mjs';
+import {createPinpayPayments} from './pinpay-payments.mjs';
 import {createVaulticPayments} from './vaultic-payments.mjs';
 export function createRuntime({env=process.env,root,stateless=true,fetcher=fetch,secure=true,store}={}){
  const shared={utmifyToken:env.UTMIFY_API_TOKEN,metaPixelId:env.META_PIXEL_ID,metaToken:env.META_ACCESS_TOKEN,stateless,fetcher};
+ const directPinpay=createPinpayPayments({env,root,fetcher});
+ const pinpayActive=env.PIX_PROVIDER==='pinpay';
  const vaultic=createVaulticPayments({env,root,fetcher});
  const urus=createPayments({...shared,key:env.URUSPAY_API_KEY,root});
  const pinpay=createPayments({...shared,key:env.PINPAY_SECRET_KEY,root:root+'-pinpay',platform:'PinPay',routePrefix:'/api/pinpay',fetcher:pinpayFetcher({secretKey:env.PINPAY_SECRET_KEY,fetcher})});
  const card=createPayout({secretKey:env.PAYOUT_SECRET_KEY,publicKey:env.PAYOUT_PUBLIC_KEY,...shared});
  const panel=createPanel({passwordHash:env.ADMIN_PASSWORD_HASH,sessionSecret:env.ADMIN_SESSION_SECRET,pinpaySecret:env.PINPAY_SECRET_KEY,urusKey:env.URUSPAY_API_KEY,store:store||configStore({root}),fetcher,secure});
  async function handle(req,res,route){
+  if(route==='/api/pinpay/webhook'||/^\/api\/pinpay\/(status|qr)\/[a-f0-9]{64}_[a-f0-9]{64}$/.test(route)||(route==='/api/charge'&&pinpayActive))return directPinpay.handle(req,res,route);
+  if(route==='/api/panel/config'&&pinpayActive){if(req.method==='POST'){res.writeHead(409,{'Content-Type':'application/json'});return res.end(JSON.stringify({error:'A PinPay está configurada como adquirente do Pix no servidor.'}));}const end=res.end.bind(res);res.end=body=>{try{const d=JSON.parse(body);if(d.provider){d.provider='pinpay';d.providers.pinpay={configured:!!env.PINPAY_SECRET_KEY};body=JSON.stringify(d);}}catch{}return end(body);};}
+
   if(route.startsWith('/api/vaultic/')||(route==='/api/charge'&&(env.VAULTIC_API_KEY||env.VERCEL)))return vaultic.handle(req,res,route);
-  if(route==='/api/panel/config'&&env.VAULTIC_API_KEY){if(req.method==='POST'){res.writeHead(409,{'Content-Type':'application/json'});return res.end(JSON.stringify({error:'A Vaultic está configurada como adquirente do PIX no servidor.'}))}const originalEnd=res.end.bind(res);res.end=body=>{try{const d=JSON.parse(body);if(d.provider){d.provider='vaultic';d.providers.vaultic={configured:true};body=JSON.stringify(d)}}catch{}return originalEnd(body)};}
+  if(route==='/api/panel/config'&&env.VAULTIC_API_KEY&&!pinpayActive){if(req.method==='POST'){res.writeHead(409,{'Content-Type':'application/json'});return res.end(JSON.stringify({error:'A Vaultic está configurada como adquirente do PIX no servidor.'}))}const originalEnd=res.end.bind(res);res.end=body=>{try{const d=JSON.parse(body);if(d.provider){d.provider='vaultic';d.providers.vaultic={configured:true};body=JSON.stringify(d)}}catch{}return originalEnd(body)};}
   if(route.startsWith('/api/panel/'))return panel.handler(req,res,route.slice(5));
   if(route.startsWith('/api/card/'))return card(req,res,route);
   if(route==='/api/pinpay/notifications')return pinpayNotification(req,res,{secretKey:env.PINPAY_SECRET_KEY,fetcher,handle:pinpay});
