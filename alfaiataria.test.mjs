@@ -10,3 +10,5 @@ for(const img of $('img[src^="/assets/bexley/"]').toArray())assert(fs.existsSync
 console.log('PASS: 7 tamanhos, kit fixo, tamanho compartilhado, fotos, avaliações e total no Pix com frete.');
 
 assert.equal($('#bex-color-picker').length,0);assert.deepEqual(p.colors,['Cinza-claro + Preto + Azul Nebuloso']);
+
+assert.equal($('.reference-pricing>p').text(),'R$ 69,90');assert.equal($('.reference-pricing>small').text(),'R$ 66,41 no PIX');
